@@ -1,0 +1,285 @@
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Усны Тоолуурын Төлбөр (QPay банкууд SVG логотой)</title>
+  <style>
+    :root{
+      --hot:#d9534f; --cold:#0b76d1; --card-bg: rgba(255,255,255,0.95); --accent:#0ea5a4; --text:#0b2540; --muted:#64748b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter, Roboto, "Segoe UI", Arial, sans-serif;color:var(--text);
+      background: linear-gradient(180deg,#e6f2ff 0%, #ffffff 100%);
+      display:flex;align-items:center;justify-content:center;padding:28px;
+    }
+    .card{width:1000px;max-width:calc(100% - 40px);background:var(--card-bg);border-radius:14px;box-shadow:0 14px 40px rgba(2,6,23,0.12);padding:20px;display:grid;grid-template-columns:1fr 360px;gap:18px}
+    @media (max-width:980px){.card{grid-template-columns:1fr}}
+    h1{margin:0 0 6px 0;font-size:22px}
+    .sub{color:var(--muted);font-size:13px;margin-bottom:12px}
+
+    .form-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    .form-row label{width:160px;color:var(--muted);font-size:14px}
+    .form-row input[type=number], .form-row input[type=text]{flex:1;padding:12px;border-radius:10px;border:2px solid #eef6fb;font-size:16px;background:transparent}
+    .form-row input.hot{border-color:var(--hot)}
+    .form-row input.cold{border-color:var(--cold)}
+
+    .controls{display:flex;gap:8px;margin-top:6px}
+    .btn{padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:white;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid #e6eef6;color:var(--muted)}
+
+    .summary{background:#fff;border-radius:12px;padding:12px;box-shadow:0 6px 18px rgba(2,6,23,0.04)}
+    .summary h3{margin:0 0 6px 0;font-size:16px}
+    .summary .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #f1f5f9}
+    .summary .row:last-child{border-bottom:0}
+    .total{font-size:20px;font-weight:700;color:#034b7a;padding-top:10px}
+
+    .banks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+    .bank-btn{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;border:1px solid #eef6fb;text-decoration:none;color:inherit;background:linear-gradient(180deg,#fff,#fbfdff);cursor:pointer}
+    .bank-logo{width:64px;height:48px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .bank-meta{display:flex;flex-direction:column}
+    .bank-meta strong{font-size:15px}
+    .muted{color:var(--muted);font-size:13px}
+
+    #result{margin-top:10px;padding:12px;border-radius:10px;background:linear-gradient(90deg,#fff,#f8fcff);font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div>
+      <h1>💧 Усны Тоолуур — QPay төлбөр (SVG лого)</h1>
+      <div class="sub">Бүх банкны логог inline SVG хэлбэрээр орууллаа. QPay шиг QR/банкан руу deep-link үүсгэж болно.</div>
+
+      <div class="form-row">
+        <label>Өрхийн нэр</label>
+        <input id="owner" type="text" placeholder="Өрхийн нэр" />
+      </div>
+
+      <div class="form-row">
+        <label>Халуун ус (м³)</label>
+        <input id="hot" type="number" min="0" class="hot" placeholder="0" />
+      </div>
+
+      <div class="form-row">
+        <label>Хүйтэн ус (м³)</label>
+        <input id="cold" type="number" min="0" class="cold" placeholder="0" />
+      </div>
+
+      <div class="controls">
+        <button class="btn" id="calcBtn">Тооцоолох</button>
+        <button class="btn ghost" id="clearBtn">Цэвэрлэх</button>
+      </div>
+
+      <div id="result">Нийт төлөх дүн: <span id="totalText">0 ₮</span></div>
+      <div style="margin-top:8px" class="muted">Тайлбар: Халуун үнэ = <strong id="hotPriceText">2500₮/м³</strong>, Хүйтэн үнэ = <strong id="coldPriceText">500₮/м³</strong></div>
+    </div>
+
+    <aside>
+      <div class="summary">
+        <h3>Товч хураангуй</h3>
+        <div class="row"><div class="muted">Өрхийн нэр</div><div id="sOwner">-</div></div>
+        <div class="row"><div class="muted">Халуун (м³)</div><div id="sHot">0</div></div>
+        <div class="row"><div class="muted">Хүйтэн (м³)</div><div id="sCold">0</div></div>
+        <div class="row total"><div>Нийт</div><div id="sTotal">0 ₮</div></div>
+      </div>
+
+      <div style="height:14px"></div>
+
+      <h3 style="margin:0 0 8px 0">Бүх (QPay-д багтдаг) банкууд</h3>
+      <div class="banks" id="banks">
+        <!-- Inline SVG logos for many banks (placeholders but vector) -->
+
+        <!-- Khan Bank -->
+        <button class="bank-btn" data-name="Khan Bank" data-url="https://www.khanbank.com">
+          <div class="bank-logo"> 
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="6" fill="#0C6" />
+              <text x="32" y="25" font-size="14" font-weight="700" fill="#003">KB</text>
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>Хаан банк</strong><span class="muted">Khan Bank</span></div>
+        </button>
+
+        <!-- State Bank -->
+        <button class="bank-btn" data-name="State Bank" data-url="https://www.statebank.mn">
+          <div class="bank-logo">
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="6" fill="#1E90FF" />
+              <text x="32" y="25" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">ST</text>
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>Төрийн банк</strong><span class="muted">State Bank</span></div>
+        </button>
+
+        <!-- Golomt Bank -->
+        <button class="bank-btn" data-name="Golomt Bank" data-url="https://www.golomtbank.com">
+          <div class="bank-logo">
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="6" fill="#003366" />
+              <text x="32" y="25" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">GB</text>
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>Голомт банк</strong><span class="muted">Golomt</span></div>
+        </button>
+
+        <!-- XacBank -->
+        <button class="bank-btn" data-name="XacBank" data-url="#">
+          <div class="bank-logo">
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="6" fill="#00A5E3" />
+              <text x="32" y="25" font-size="12" font-weight="700" fill="#012" text-anchor="middle">XB</text>
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>XacBank</strong><span class="muted">Xac</span></div>
+        </button>
+
+        <!-- Khas Bank -->
+        <button class="bank-btn" data-name="Khas Bank" data-url="#">
+          <div class="bank-logo">
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="6" fill="#2E8B57" />
+              <text x="32" y="25" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">KB</text>
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>Хаc банк</strong><span class="muted">Khas</span></div>
+        </button>
+
+        <!-- TDB -->
+        <button class="bank-btn" data-name="TDB" data-url="https://www.tdbm.mn">
+          <div class="bank-logo">
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="6" fill="#7C3AED" />
+              <text x="32" y="25" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">TDB</text>
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>TDB</strong><span class="muted">Trade & Dev</span></div>
+        </button>
+
+        <!-- Ard Credit -->
+        <button class="bank-btn" data-name="Ard Credit" data-url="#">
+          <div class="bank-logo">
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="6" fill="#FF8C00" />
+              <text x="32" y="25" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">ARD</text>
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>Ard Credit</strong><span class="muted">Ard</span></div>
+        </button>
+
+        <!-- Capitron / X -->
+        <button class="bank-btn" data-name="Capitron" data-url="#">
+          <div class="bank-logo">
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="6" fill="#E63946" />
+              <text x="32" y="25" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">CP</text>
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>Capitron</strong><span class="muted">Cap</span></div>
+        </button>
+
+        <!-- NIB -->
+        <button class="bank-btn" data-name="NIB" data-url="#">
+          <div class="bank-logo">
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="6" fill="#0B5345" />
+              <text x="32" y="25" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">NIB</text>
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>NIB</strong><span class="muted">National</span></div>
+        </button>
+
+        <!-- QPay icon -->
+        <button class="bank-btn" data-name="QPay" data-url="#">
+          <div class="bank-logo">
+            <svg viewBox="0 0 64 40" width="64" height="48" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="40" rx="8" fill="#ffb703" />
+              <circle cx="20" cy="20" r="6" fill="#fff" />
+              <circle cx="36" cy="20" r="6" fill="#fff" opacity="0.6" />
+            </svg>
+          </div>
+          <div class="bank-meta"><strong>QPay</strong><span class="muted">QR/Deep link</span></div>
+        </button>
+
+      </div>
+
+      <div style="height:14px"></div>
+      <button id="copyBtn" class="btn ghost">Төлбөрийн мэдээллийг хуулж авах</button>
+    </aside>
+  </div>
+
+<script>
+  const HOT_PRICE = 2500; const COLD_PRICE = 500;
+  const hotEl = document.getElementById('hot');
+  const coldEl = document.getElementById('cold');
+  const ownerEl = document.getElementById('owner');
+  const totalText = document.getElementById('totalText');
+  const sOwner = document.getElementById('sOwner');
+  const sHot = document.getElementById('sHot');
+  const sCold = document.getElementById('sCold');
+  const sTotal = document.getElementById('sTotal');
+  const calcBtn = document.getElementById('calcBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const copyBtn = document.getElementById('copyBtn');
+
+  document.getElementById('hotPriceText').textContent = HOT_PRICE.toLocaleString() + '₮/м³';
+  document.getElementById('coldPriceText').textContent = COLD_PRICE.toLocaleString() + '₮/м³';
+
+  function parseOrZero(v){ const n = parseFloat(v); return Number.isFinite(n)? n:0; }
+  function formatTugrik(n){ return n.toLocaleString('en-US') + ' ₮'; }
+
+  function calculate(){
+    const hot = parseOrZero(hotEl.value);
+    const cold = parseOrZero(coldEl.value);
+    const owner = (ownerEl.value || '').trim();
+    const total = hot * HOT_PRICE + cold * COLD_PRICE;
+    totalText.textContent = formatTugrik(total);
+    sOwner.textContent = owner || '-';
+    sHot.textContent = hot;
+    sCold.textContent = cold;
+    sTotal.textContent = formatTugrik(total);
+    hotEl.classList.toggle('hot', hot>0);
+    coldEl.classList.toggle('cold', cold>0);
+  }
+
+  calcBtn.addEventListener('click', (e)=>{ e.preventDefault(); calculate(); });
+  clearBtn.addEventListener('click', ()=>{
+    ownerEl.value=''; hotEl.value=''; coldEl.value=''; totalText.textContent='0 ₮'; sOwner.textContent='-'; sHot.textContent='0'; sCold.textContent='0'; sTotal.textContent='0 ₮'; hotEl.classList.remove('hot'); coldEl.classList.remove('cold');
+  });
+
+  document.querySelectorAll('.bank-btn').forEach(btn=>{
+    btn.addEventListener('click', (ev)=>{
+      ev.preventDefault();
+      const name = btn.dataset.name;
+      const url = btn.dataset.url || '#';
+      const owner = ownerEl.value || '-';
+      const hot = parseOrZero(hotEl.value);
+      const cold = parseOrZero(coldEl.value);
+      const total = sTotal.textContent || formatTugrik(hot*HOT_PRICE + cold*COLD_PRICE);
+      if(owner==='-' && hot===0 && cold===0){ alert('Эхлээд өрхийн нэр болон заалтуудаа оруулна уу.'); return; }
+      const info = `Өрхийн: ${owner}; Халуун: ${hot}м³; Хүйтэн: ${cold}м³; Нийт: ${total}`;
+      // For QPay flow: if name === 'QPay' we would open QPay deeplink (example)
+      if(name === 'QPay'){
+        // Example deep link format (demo) — replace with real QPay deep link if available
+        const qurl = 'qpay://pay?amount=' + encodeURIComponent(total.replace(/[^0-9]/g,'')) + '&info=' + encodeURIComponent(info);
+        alert('QPay-руу холбогдох (демо): ' + qurl);
+        // window.open(qurl);
+        return;
+      }
+      // otherwise open bank site with payment_info param (demo)
+      const openUrl = url + '?payment_info=' + encodeURIComponent(info);
+      window.open(openUrl, '_blank', 'noopener');
+    });
+  });
+
+  copyBtn.addEventListener('click', ()=>{
+    const owner = ownerEl.value || '-'; const hot = parseOrZero(hotEl.value); const cold = parseOrZero(coldEl.value); const total = sTotal.textContent || formatTugrik(hot*HOT_PRICE + cold*COLD_PRICE);
+    const text = `Өрхийн: ${owner}\nХалуун: ${hot} м³\nХүйтэн: ${cold} м³\nНийт: ${total}`;
+    navigator.clipboard.writeText(text).then(()=>alert('Төлбөрийн мэдээлэл хуулагдлаа')).catch(()=>alert('Хуулж чадсангүй'));
+  });
+
+  [hotEl,coldEl,ownerEl].forEach(i=>i.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); calculate(); } }));
+  calculate();
+</script>
+</body>
+</html>
